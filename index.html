@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Tour — Rotation Schedule</title>
+<style>
+  :root{
+    --ink:#241B2F;
+    --paper:#FBF7F0;
+    --panel:#FFFFFF;
+    --line:#E7DFCF;
+    --purple:#5B2C83;
+    --purple-deep:#3E1D5C;
+    --admin:#F4C93B;
+    --admin-ink:#5A4600;
+    --academic:#F2B08A;
+    --academic-ink:#6B3110;
+    --ittower:#7FC4D1;
+    --ittower-ink:#0B4A55;
+    --common:#F0904B;
+    --common-ink:#5C2C05;
+    --admission:#B9A6D9;
+    --admission-ink:#3A215C;
+    --muted:#6E6459;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Georgia', 'Iowan Old Style', 'Palatino Linotype', serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sans{font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;}
+
+  /* ---------- Header ---------- */
+  header.hero{
+    background:
+      radial-gradient(1200px 260px at 15% -40%, rgba(255,255,255,0.10), transparent),
+      linear-gradient(135deg, var(--purple) 0%, var(--purple-deep) 100%);
+    color:#fff;
+    padding:44px 28px 34px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute; right:-60px; top:-60px;
+    width:260px; height:260px; border-radius:50%;
+    background:rgba(255,255,255,0.06);
+  }
+  .eyebrow{
+    font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;
+    font-size:12.5px; letter-spacing:.14em; color:#D9C4F0; margin:0 0 10px;
+  }
+  h1{
+    font-size:clamp(28px,4vw,42px);
+    margin:0 0 8px;
+    font-weight:600;
+    letter-spacing:.2px;
+  }
+  .sub{
+    font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;
+    font-size:15.5px; color:#E7DAF5; max-width:640px; line-height:1.55; margin:0 0 22px;
+  }
+  .stat-row{display:flex; gap:28px; flex-wrap:wrap;}
+  .stat{font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;}
+  .stat .num{font-size:26px; font-weight:700; display:block; line-height:1;}
+  .stat .label{font-size:12px; color:#D9C4F0; letter-spacing:.04em; margin-top:4px; display:block;}
+
+  /* ---------- Layout ---------- */
+  main{max-width:1180px; margin:0 auto; padding:34px 24px 60px;}
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+  }
+
+  /* ---------- Guarantee note ---------- */
+  .guarantee{
+    display:flex; gap:14px; align-items:flex-start;
+    padding:18px 20px; margin-bottom:28px;
+  }
+  .guarantee .mark{
+    flex:0 0 auto; width:34px; height:34px; border-radius:50%;
+    background:var(--purple); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-family:'Avenir Next',sans-serif; font-weight:700; font-size:15px;
+  }
+  .guarantee p{margin:0; font-size:14.5px; line-height:1.6; color:#3a3129;}
+  .guarantee strong{color:var(--purple-deep);}
+
+  /* ---------- Legend ---------- */
+  .legend{
+    display:flex; flex-wrap:wrap; gap:10px 22px;
+    padding:16px 20px; margin-bottom:26px;
+    font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  .legend .chip{display:flex; align-items:center; gap:8px; font-size:13px; color:#3a3129;}
+  .legend .swatch{width:13px; height:13px; border-radius:3px; display:inline-block;}
+
+  /* ---------- Tabs ---------- */
+  .tabs{
+    display:flex; gap:6px; margin-bottom:18px;
+    font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  .tab-btn{
+    border:1px solid var(--line); background:var(--panel);
+    padding:9px 18px; border-radius:8px; cursor:pointer;
+    font-size:13.5px; color:var(--muted); font-weight:600;
+    transition:all .15s ease;
+  }
+  .tab-btn.active{
+    background:var(--purple); border-color:var(--purple); color:#fff;
+  }
+  .tab-btn:hover:not(.active){border-color:var(--purple);}
+
+  section.view{display:none;}
+  section.view.active{display:block;}
+
+  /* ---------- Table view ---------- */
+  .table-wrap{overflow-x:auto; border-radius:10px; border:1px solid var(--line);}
+  table{border-collapse:collapse; width:100%; min-width:760px; font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;}
+  thead th{
+    position:sticky; top:0; background:var(--purple-deep); color:#fff;
+    text-align:left; padding:12px 14px; font-size:12.5px; letter-spacing:.03em;
+    font-weight:600; white-space:nowrap;
+  }
+  thead th:first-child{border-top-left-radius:0;}
+  tbody td{
+    padding:0; border-bottom:1px solid var(--line); border-right:1px solid var(--line);
+    font-size:13px;
+  }
+  tbody td:first-child{
+    background:#F4EDE0; font-weight:700; color:var(--purple-deep);
+    text-align:center; padding:10px 8px; white-space:nowrap; border-right:2px solid var(--line);
+  }
+  tbody tr:nth-child(even) td:first-child{background:#EEE4D2;}
+  .cell-inner{
+    padding:10px 12px; height:100%;
+  }
+  .venue-num{
+    font-size:10.5px; opacity:.7; display:block; margin-bottom:2px; font-weight:700;
+  }
+  .venue-name{font-weight:600; line-height:1.25;}
+
+  .blk-admin{background:var(--admin); color:var(--admin-ink);}
+  .blk-academic{background:var(--academic); color:var(--academic-ink);}
+  .blk-ittower{background:var(--ittower); color:var(--ittower-ink);}
+  .blk-common{background:var(--common); color:var(--common-ink);}
+  .blk-admission{background:var(--admission); color:var(--admission-ink);}
+
+  /* ---------- Team routes view ---------- */
+  .route-card{
+    padding:20px 22px; margin-bottom:16px;
+  }
+  .route-head{
+    display:flex; align-items:center; gap:10px; margin-bottom:14px;
+    font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  .team-dot{width:11px; height:11px; border-radius:50%; background:var(--purple);}
+  .route-head h3{margin:0; font-size:16px; font-weight:700; color:var(--purple-deep);}
+  .route-head span{
+    font-size:12px; color:var(--muted); margin-left:auto;
+  }
+  .route-track{
+    display:flex; flex-wrap:wrap; gap:8px;
+    font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;
+  }
+  .stop-chip{
+    display:flex; align-items:center; gap:6px;
+    border-radius:7px; padding:6px 10px; font-size:12px; font-weight:600;
+    white-space:nowrap;
+  }
+  .stop-chip .n{
+    font-size:10px; opacity:.75; font-weight:700;
+  }
+  .arrow{color:var(--line); align-self:center; font-size:13px;}
+
+  footer{
+    text-align:center; padding:20px; font-size:12px; color:var(--muted);
+    font-family:'Avenir Next','Segoe UI',Helvetica,Arial,sans-serif;
+  }
+
+  @media (max-width:640px){
+    header.hero{padding:32px 18px 26px;}
+    main{padding:24px 14px 40px;}
+    .stat-row{gap:20px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <p class="eyebrow sans">CAMPUS ORIENTATION</p>
+  <h1>Campus Tour — Rotation Schedule</h1>
+  <p class="sub">Five teams move through all 31 venues together, one time slot at a time. Every team follows the same route, offset from the others — so no two teams are ever standing in the same room.</p>
+  <div class="stat-row">
+    <div class="stat"><span class="num">31</span><span class="label">VENUES</span></div>
+    <div class="stat"><span class="num">5</span><span class="label">TEAMS</span></div>
+    <div class="stat"><span class="num">31</span><span class="label">TIME SLOTS</span></div>
+    <div class="stat"><span class="num">0</span><span class="label">OVERLAPS</span></div>
+  </div>
+</header>
+
+<main>
+
+  <div class="panel guarantee">
+    <div class="mark sans">i</div>
+    <p>Each team's starting point is spaced <strong>6 venues apart</strong> (venues 1, 7, 13, 19, 25) and every team simply advances to the next venue in sequence each slot, wrapping from 31 back to 1. Because the five starting offsets are all different, the five teams can never land on the same venue in the same slot — <strong>by construction, not by checking</strong>. After 31 slots, every team has visited every venue exactly once.</p>
+  </div>
+
+  <div class="panel legend">
+    <span class="chip"><span class="swatch" style="background:var(--admin)"></span>Admin Block</span>
+    <span class="chip"><span class="swatch" style="background:var(--academic)"></span>Academic Block</span>
+    <span class="chip"><span class="swatch" style="background:var(--ittower)"></span>IT Tower</span>
+    <span class="chip"><span class="swatch" style="background:var(--common)"></span>Common Block</span>
+    <span class="chip"><span class="swatch" style="background:var(--admission)"></span>Admission Block</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-view="by-time">By Time Slot</button>
+    <button class="tab-btn" data-view="by-team">By Team Route</button>
+  </div>
+
+  <section class="view active" id="by-time">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr id="table-head"></tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="view" id="by-team">
+    <div id="routes-wrap"></div>
+  </section>
+
+</main>
+
+<footer>Rotation designed so five teams tour 31 venues in parallel with zero venue collisions.</footer>
+
+<script>
+const DATA = {"venues": [{"num": 1, "name": "Library", "block": "Admin Block"}, {"num": 2, "name": "Yoga Hall", "block": "Admin Block"}, {"num": 3, "name": "Placement Hall", "block": "Admin Block"}, {"num": 4, "name": "COE Office", "block": "Admin Block"}, {"num": 5, "name": "Heavenly Water", "block": "Admin Block"}, {"num": 6, "name": "IQAC", "block": "Admin Block"}, {"num": 7, "name": "Kite Recepetion", "block": "Admin Block"}, {"num": 8, "name": "Clubs and Cells", "block": "Academic Block"}, {"num": 9, "name": "Metazord", "block": "Academic Block"}, {"num": 10, "name": "Thought Works Lab", "block": "Academic Block"}, {"num": 11, "name": "PED Room", "block": "Academic Block"}, {"num": 12, "name": "Labs", "block": "Academic Block"}, {"num": 13, "name": "MI Room", "block": "Academic Block"}, {"num": 14, "name": "Counselling room", "block": "Academic Block"}, {"num": 15, "name": "Centre of Excellence", "block": "Academic Block"}, {"num": 16, "name": "Idea Lab", "block": "Academic Block"}, {"num": 17, "name": "Go Kart", "block": "Academic Block"}, {"num": 18, "name": "Department and Classroom", "block": "Academic Block"}, {"num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}, {"num": 20, "name": "Ground", "block": "IT Tower"}, {"num": 21, "name": "SOI", "block": "IT Tower"}, {"num": 22, "name": "Incubation Centre", "block": "IT Tower"}, {"num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}, {"num": 24, "name": "Dell Canteen", "block": "Common Block"}, {"num": 25, "name": "Microbiology Lab", "block": "Common Block"}, {"num": 26, "name": "ATM", "block": "Common Block"}, {"num": 27, "name": "Auditorium", "block": "Common Block"}, {"num": 28, "name": "Students Parking", "block": "Common Block"}, {"num": 29, "name": "Hostel", "block": "Common Block"}, {"num": 30, "name": "Accounts Section", "block": "Common Block"}, {"num": 31, "name": "Ignite Talks", "block": "Admission Block"}], "teams": ["Team A", "Team B", "Team C", "Team D", "Team E"], "schedule": [{"slot": 1, "stops": [{"team": "Team A", "num": 1, "name": "Library", "block": "Admin Block"}, {"team": "Team B", "num": 7, "name": "Kite Recepetion", "block": "Admin Block"}, {"team": "Team C", "num": 13, "name": "MI Room", "block": "Academic Block"}, {"team": "Team D", "num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}, {"team": "Team E", "num": 25, "name": "Microbiology Lab", "block": "Common Block"}]}, {"slot": 2, "stops": [{"team": "Team A", "num": 2, "name": "Yoga Hall", "block": "Admin Block"}, {"team": "Team B", "num": 8, "name": "Clubs and Cells", "block": "Academic Block"}, {"team": "Team C", "num": 14, "name": "Counselling room", "block": "Academic Block"}, {"team": "Team D", "num": 20, "name": "Ground", "block": "IT Tower"}, {"team": "Team E", "num": 26, "name": "ATM", "block": "Common Block"}]}, {"slot": 3, "stops": [{"team": "Team A", "num": 3, "name": "Placement Hall", "block": "Admin Block"}, {"team": "Team B", "num": 9, "name": "Metazord", "block": "Academic Block"}, {"team": "Team C", "num": 15, "name": "Centre of Excellence", "block": "Academic Block"}, {"team": "Team D", "num": 21, "name": "SOI", "block": "IT Tower"}, {"team": "Team E", "num": 27, "name": "Auditorium", "block": "Common Block"}]}, {"slot": 4, "stops": [{"team": "Team A", "num": 4, "name": "COE Office", "block": "Admin Block"}, {"team": "Team B", "num": 10, "name": "Thought Works Lab", "block": "Academic Block"}, {"team": "Team C", "num": 16, "name": "Idea Lab", "block": "Academic Block"}, {"team": "Team D", "num": 22, "name": "Incubation Centre", "block": "IT Tower"}, {"team": "Team E", "num": 28, "name": "Students Parking", "block": "Common Block"}]}, {"slot": 5, "stops": [{"team": "Team A", "num": 5, "name": "Heavenly Water", "block": "Admin Block"}, {"team": "Team B", "num": 11, "name": "PED Room", "block": "Academic Block"}, {"team": "Team C", "num": 17, "name": "Go Kart", "block": "Academic Block"}, {"team": "Team D", "num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}, {"team": "Team E", "num": 29, "name": "Hostel", "block": "Common Block"}]}, {"slot": 6, "stops": [{"team": "Team A", "num": 6, "name": "IQAC", "block": "Admin Block"}, {"team": "Team B", "num": 12, "name": "Labs", "block": "Academic Block"}, {"team": "Team C", "num": 18, "name": "Department and Classroom", "block": "Academic Block"}, {"team": "Team D", "num": 24, "name": "Dell Canteen", "block": "Common Block"}, {"team": "Team E", "num": 30, "name": "Accounts Section", "block": "Common Block"}]}, {"slot": 7, "stops": [{"team": "Team A", "num": 7, "name": "Kite Recepetion", "block": "Admin Block"}, {"team": "Team B", "num": 13, "name": "MI Room", "block": "Academic Block"}, {"team": "Team C", "num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}, {"team": "Team D", "num": 25, "name": "Microbiology Lab", "block": "Common Block"}, {"team": "Team E", "num": 31, "name": "Ignite Talks", "block": "Admission Block"}]}, {"slot": 8, "stops": [{"team": "Team A", "num": 8, "name": "Clubs and Cells", "block": "Academic Block"}, {"team": "Team B", "num": 14, "name": "Counselling room", "block": "Academic Block"}, {"team": "Team C", "num": 20, "name": "Ground", "block": "IT Tower"}, {"team": "Team D", "num": 26, "name": "ATM", "block": "Common Block"}, {"team": "Team E", "num": 1, "name": "Library", "block": "Admin Block"}]}, {"slot": 9, "stops": [{"team": "Team A", "num": 9, "name": "Metazord", "block": "Academic Block"}, {"team": "Team B", "num": 15, "name": "Centre of Excellence", "block": "Academic Block"}, {"team": "Team C", "num": 21, "name": "SOI", "block": "IT Tower"}, {"team": "Team D", "num": 27, "name": "Auditorium", "block": "Common Block"}, {"team": "Team E", "num": 2, "name": "Yoga Hall", "block": "Admin Block"}]}, {"slot": 10, "stops": [{"team": "Team A", "num": 10, "name": "Thought Works Lab", "block": "Academic Block"}, {"team": "Team B", "num": 16, "name": "Idea Lab", "block": "Academic Block"}, {"team": "Team C", "num": 22, "name": "Incubation Centre", "block": "IT Tower"}, {"team": "Team D", "num": 28, "name": "Students Parking", "block": "Common Block"}, {"team": "Team E", "num": 3, "name": "Placement Hall", "block": "Admin Block"}]}, {"slot": 11, "stops": [{"team": "Team A", "num": 11, "name": "PED Room", "block": "Academic Block"}, {"team": "Team B", "num": 17, "name": "Go Kart", "block": "Academic Block"}, {"team": "Team C", "num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}, {"team": "Team D", "num": 29, "name": "Hostel", "block": "Common Block"}, {"team": "Team E", "num": 4, "name": "COE Office", "block": "Admin Block"}]}, {"slot": 12, "stops": [{"team": "Team A", "num": 12, "name": "Labs", "block": "Academic Block"}, {"team": "Team B", "num": 18, "name": "Department and Classroom", "block": "Academic Block"}, {"team": "Team C", "num": 24, "name": "Dell Canteen", "block": "Common Block"}, {"team": "Team D", "num": 30, "name": "Accounts Section", "block": "Common Block"}, {"team": "Team E", "num": 5, "name": "Heavenly Water", "block": "Admin Block"}]}, {"slot": 13, "stops": [{"team": "Team A", "num": 13, "name": "MI Room", "block": "Academic Block"}, {"team": "Team B", "num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}, {"team": "Team C", "num": 25, "name": "Microbiology Lab", "block": "Common Block"}, {"team": "Team D", "num": 31, "name": "Ignite Talks", "block": "Admission Block"}, {"team": "Team E", "num": 6, "name": "IQAC", "block": "Admin Block"}]}, {"slot": 14, "stops": [{"team": "Team A", "num": 14, "name": "Counselling room", "block": "Academic Block"}, {"team": "Team B", "num": 20, "name": "Ground", "block": "IT Tower"}, {"team": "Team C", "num": 26, "name": "ATM", "block": "Common Block"}, {"team": "Team D", "num": 1, "name": "Library", "block": "Admin Block"}, {"team": "Team E", "num": 7, "name": "Kite Recepetion", "block": "Admin Block"}]}, {"slot": 15, "stops": [{"team": "Team A", "num": 15, "name": "Centre of Excellence", "block": "Academic Block"}, {"team": "Team B", "num": 21, "name": "SOI", "block": "IT Tower"}, {"team": "Team C", "num": 27, "name": "Auditorium", "block": "Common Block"}, {"team": "Team D", "num": 2, "name": "Yoga Hall", "block": "Admin Block"}, {"team": "Team E", "num": 8, "name": "Clubs and Cells", "block": "Academic Block"}]}, {"slot": 16, "stops": [{"team": "Team A", "num": 16, "name": "Idea Lab", "block": "Academic Block"}, {"team": "Team B", "num": 22, "name": "Incubation Centre", "block": "IT Tower"}, {"team": "Team C", "num": 28, "name": "Students Parking", "block": "Common Block"}, {"team": "Team D", "num": 3, "name": "Placement Hall", "block": "Admin Block"}, {"team": "Team E", "num": 9, "name": "Metazord", "block": "Academic Block"}]}, {"slot": 17, "stops": [{"team": "Team A", "num": 17, "name": "Go Kart", "block": "Academic Block"}, {"team": "Team B", "num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}, {"team": "Team C", "num": 29, "name": "Hostel", "block": "Common Block"}, {"team": "Team D", "num": 4, "name": "COE Office", "block": "Admin Block"}, {"team": "Team E", "num": 10, "name": "Thought Works Lab", "block": "Academic Block"}]}, {"slot": 18, "stops": [{"team": "Team A", "num": 18, "name": "Department and Classroom", "block": "Academic Block"}, {"team": "Team B", "num": 24, "name": "Dell Canteen", "block": "Common Block"}, {"team": "Team C", "num": 30, "name": "Accounts Section", "block": "Common Block"}, {"team": "Team D", "num": 5, "name": "Heavenly Water", "block": "Admin Block"}, {"team": "Team E", "num": 11, "name": "PED Room", "block": "Academic Block"}]}, {"slot": 19, "stops": [{"team": "Team A", "num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}, {"team": "Team B", "num": 25, "name": "Microbiology Lab", "block": "Common Block"}, {"team": "Team C", "num": 31, "name": "Ignite Talks", "block": "Admission Block"}, {"team": "Team D", "num": 6, "name": "IQAC", "block": "Admin Block"}, {"team": "Team E", "num": 12, "name": "Labs", "block": "Academic Block"}]}, {"slot": 20, "stops": [{"team": "Team A", "num": 20, "name": "Ground", "block": "IT Tower"}, {"team": "Team B", "num": 26, "name": "ATM", "block": "Common Block"}, {"team": "Team C", "num": 1, "name": "Library", "block": "Admin Block"}, {"team": "Team D", "num": 7, "name": "Kite Recepetion", "block": "Admin Block"}, {"team": "Team E", "num": 13, "name": "MI Room", "block": "Academic Block"}]}, {"slot": 21, "stops": [{"team": "Team A", "num": 21, "name": "SOI", "block": "IT Tower"}, {"team": "Team B", "num": 27, "name": "Auditorium", "block": "Common Block"}, {"team": "Team C", "num": 2, "name": "Yoga Hall", "block": "Admin Block"}, {"team": "Team D", "num": 8, "name": "Clubs and Cells", "block": "Academic Block"}, {"team": "Team E", "num": 14, "name": "Counselling room", "block": "Academic Block"}]}, {"slot": 22, "stops": [{"team": "Team A", "num": 22, "name": "Incubation Centre", "block": "IT Tower"}, {"team": "Team B", "num": 28, "name": "Students Parking", "block": "Common Block"}, {"team": "Team C", "num": 3, "name": "Placement Hall", "block": "Admin Block"}, {"team": "Team D", "num": 9, "name": "Metazord", "block": "Academic Block"}, {"team": "Team E", "num": 15, "name": "Centre of Excellence", "block": "Academic Block"}]}, {"slot": 23, "stops": [{"team": "Team A", "num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}, {"team": "Team B", "num": 29, "name": "Hostel", "block": "Common Block"}, {"team": "Team C", "num": 4, "name": "COE Office", "block": "Admin Block"}, {"team": "Team D", "num": 10, "name": "Thought Works Lab", "block": "Academic Block"}, {"team": "Team E", "num": 16, "name": "Idea Lab", "block": "Academic Block"}]}, {"slot": 24, "stops": [{"team": "Team A", "num": 24, "name": "Dell Canteen", "block": "Common Block"}, {"team": "Team B", "num": 30, "name": "Accounts Section", "block": "Common Block"}, {"team": "Team C", "num": 5, "name": "Heavenly Water", "block": "Admin Block"}, {"team": "Team D", "num": 11, "name": "PED Room", "block": "Academic Block"}, {"team": "Team E", "num": 17, "name": "Go Kart", "block": "Academic Block"}]}, {"slot": 25, "stops": [{"team": "Team A", "num": 25, "name": "Microbiology Lab", "block": "Common Block"}, {"team": "Team B", "num": 31, "name": "Ignite Talks", "block": "Admission Block"}, {"team": "Team C", "num": 6, "name": "IQAC", "block": "Admin Block"}, {"team": "Team D", "num": 12, "name": "Labs", "block": "Academic Block"}, {"team": "Team E", "num": 18, "name": "Department and Classroom", "block": "Academic Block"}]}, {"slot": 26, "stops": [{"team": "Team A", "num": 26, "name": "ATM", "block": "Common Block"}, {"team": "Team B", "num": 1, "name": "Library", "block": "Admin Block"}, {"team": "Team C", "num": 7, "name": "Kite Recepetion", "block": "Admin Block"}, {"team": "Team D", "num": 13, "name": "MI Room", "block": "Academic Block"}, {"team": "Team E", "num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}]}, {"slot": 27, "stops": [{"team": "Team A", "num": 27, "name": "Auditorium", "block": "Common Block"}, {"team": "Team B", "num": 2, "name": "Yoga Hall", "block": "Admin Block"}, {"team": "Team C", "num": 8, "name": "Clubs and Cells", "block": "Academic Block"}, {"team": "Team D", "num": 14, "name": "Counselling room", "block": "Academic Block"}, {"team": "Team E", "num": 20, "name": "Ground", "block": "IT Tower"}]}, {"slot": 28, "stops": [{"team": "Team A", "num": 28, "name": "Students Parking", "block": "Common Block"}, {"team": "Team B", "num": 3, "name": "Placement Hall", "block": "Admin Block"}, {"team": "Team C", "num": 9, "name": "Metazord", "block": "Academic Block"}, {"team": "Team D", "num": 15, "name": "Centre of Excellence", "block": "Academic Block"}, {"team": "Team E", "num": 21, "name": "SOI", "block": "IT Tower"}]}, {"slot": 29, "stops": [{"team": "Team A", "num": 29, "name": "Hostel", "block": "Common Block"}, {"team": "Team B", "num": 4, "name": "COE Office", "block": "Admin Block"}, {"team": "Team C", "num": 10, "name": "Thought Works Lab", "block": "Academic Block"}, {"team": "Team D", "num": 16, "name": "Idea Lab", "block": "Academic Block"}, {"team": "Team E", "num": 22, "name": "Incubation Centre", "block": "IT Tower"}]}, {"slot": 30, "stops": [{"team": "Team A", "num": 30, "name": "Accounts Section", "block": "Common Block"}, {"team": "Team B", "num": 5, "name": "Heavenly Water", "block": "Admin Block"}, {"team": "Team C", "num": 11, "name": "PED Room", "block": "Academic Block"}, {"team": "Team D", "num": 17, "name": "Go Kart", "block": "Academic Block"}, {"team": "Team E", "num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}]}, {"slot": 31, "stops": [{"team": "Team A", "num": 31, "name": "Ignite Talks", "block": "Admission Block"}, {"team": "Team B", "num": 6, "name": "IQAC", "block": "Admin Block"}, {"team": "Team C", "num": 12, "name": "Labs", "block": "Academic Block"}, {"team": "Team D", "num": 18, "name": "Department and Classroom", "block": "Academic Block"}, {"team": "Team E", "num": 24, "name": "Dell Canteen", "block": "Common Block"}]}], "teamRoutes": [{"team": "Team A", "route": [{"num": 1, "name": "Library", "block": "Admin Block"}, {"num": 2, "name": "Yoga Hall", "block": "Admin Block"}, {"num": 3, "name": "Placement Hall", "block": "Admin Block"}, {"num": 4, "name": "COE Office", "block": "Admin Block"}, {"num": 5, "name": "Heavenly Water", "block": "Admin Block"}, {"num": 6, "name": "IQAC", "block": "Admin Block"}, {"num": 7, "name": "Kite Recepetion", "block": "Admin Block"}, {"num": 8, "name": "Clubs and Cells", "block": "Academic Block"}, {"num": 9, "name": "Metazord", "block": "Academic Block"}, {"num": 10, "name": "Thought Works Lab", "block": "Academic Block"}, {"num": 11, "name": "PED Room", "block": "Academic Block"}, {"num": 12, "name": "Labs", "block": "Academic Block"}, {"num": 13, "name": "MI Room", "block": "Academic Block"}, {"num": 14, "name": "Counselling room", "block": "Academic Block"}, {"num": 15, "name": "Centre of Excellence", "block": "Academic Block"}, {"num": 16, "name": "Idea Lab", "block": "Academic Block"}, {"num": 17, "name": "Go Kart", "block": "Academic Block"}, {"num": 18, "name": "Department and Classroom", "block": "Academic Block"}, {"num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}, {"num": 20, "name": "Ground", "block": "IT Tower"}, {"num": 21, "name": "SOI", "block": "IT Tower"}, {"num": 22, "name": "Incubation Centre", "block": "IT Tower"}, {"num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}, {"num": 24, "name": "Dell Canteen", "block": "Common Block"}, {"num": 25, "name": "Microbiology Lab", "block": "Common Block"}, {"num": 26, "name": "ATM", "block": "Common Block"}, {"num": 27, "name": "Auditorium", "block": "Common Block"}, {"num": 28, "name": "Students Parking", "block": "Common Block"}, {"num": 29, "name": "Hostel", "block": "Common Block"}, {"num": 30, "name": "Accounts Section", "block": "Common Block"}, {"num": 31, "name": "Ignite Talks", "block": "Admission Block"}]}, {"team": "Team B", "route": [{"num": 7, "name": "Kite Recepetion", "block": "Admin Block"}, {"num": 8, "name": "Clubs and Cells", "block": "Academic Block"}, {"num": 9, "name": "Metazord", "block": "Academic Block"}, {"num": 10, "name": "Thought Works Lab", "block": "Academic Block"}, {"num": 11, "name": "PED Room", "block": "Academic Block"}, {"num": 12, "name": "Labs", "block": "Academic Block"}, {"num": 13, "name": "MI Room", "block": "Academic Block"}, {"num": 14, "name": "Counselling room", "block": "Academic Block"}, {"num": 15, "name": "Centre of Excellence", "block": "Academic Block"}, {"num": 16, "name": "Idea Lab", "block": "Academic Block"}, {"num": 17, "name": "Go Kart", "block": "Academic Block"}, {"num": 18, "name": "Department and Classroom", "block": "Academic Block"}, {"num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}, {"num": 20, "name": "Ground", "block": "IT Tower"}, {"num": 21, "name": "SOI", "block": "IT Tower"}, {"num": 22, "name": "Incubation Centre", "block": "IT Tower"}, {"num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}, {"num": 24, "name": "Dell Canteen", "block": "Common Block"}, {"num": 25, "name": "Microbiology Lab", "block": "Common Block"}, {"num": 26, "name": "ATM", "block": "Common Block"}, {"num": 27, "name": "Auditorium", "block": "Common Block"}, {"num": 28, "name": "Students Parking", "block": "Common Block"}, {"num": 29, "name": "Hostel", "block": "Common Block"}, {"num": 30, "name": "Accounts Section", "block": "Common Block"}, {"num": 31, "name": "Ignite Talks", "block": "Admission Block"}, {"num": 1, "name": "Library", "block": "Admin Block"}, {"num": 2, "name": "Yoga Hall", "block": "Admin Block"}, {"num": 3, "name": "Placement Hall", "block": "Admin Block"}, {"num": 4, "name": "COE Office", "block": "Admin Block"}, {"num": 5, "name": "Heavenly Water", "block": "Admin Block"}, {"num": 6, "name": "IQAC", "block": "Admin Block"}]}, {"team": "Team C", "route": [{"num": 13, "name": "MI Room", "block": "Academic Block"}, {"num": 14, "name": "Counselling room", "block": "Academic Block"}, {"num": 15, "name": "Centre of Excellence", "block": "Academic Block"}, {"num": 16, "name": "Idea Lab", "block": "Academic Block"}, {"num": 17, "name": "Go Kart", "block": "Academic Block"}, {"num": 18, "name": "Department and Classroom", "block": "Academic Block"}, {"num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}, {"num": 20, "name": "Ground", "block": "IT Tower"}, {"num": 21, "name": "SOI", "block": "IT Tower"}, {"num": 22, "name": "Incubation Centre", "block": "IT Tower"}, {"num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}, {"num": 24, "name": "Dell Canteen", "block": "Common Block"}, {"num": 25, "name": "Microbiology Lab", "block": "Common Block"}, {"num": 26, "name": "ATM", "block": "Common Block"}, {"num": 27, "name": "Auditorium", "block": "Common Block"}, {"num": 28, "name": "Students Parking", "block": "Common Block"}, {"num": 29, "name": "Hostel", "block": "Common Block"}, {"num": 30, "name": "Accounts Section", "block": "Common Block"}, {"num": 31, "name": "Ignite Talks", "block": "Admission Block"}, {"num": 1, "name": "Library", "block": "Admin Block"}, {"num": 2, "name": "Yoga Hall", "block": "Admin Block"}, {"num": 3, "name": "Placement Hall", "block": "Admin Block"}, {"num": 4, "name": "COE Office", "block": "Admin Block"}, {"num": 5, "name": "Heavenly Water", "block": "Admin Block"}, {"num": 6, "name": "IQAC", "block": "Admin Block"}, {"num": 7, "name": "Kite Recepetion", "block": "Admin Block"}, {"num": 8, "name": "Clubs and Cells", "block": "Academic Block"}, {"num": 9, "name": "Metazord", "block": "Academic Block"}, {"num": 10, "name": "Thought Works Lab", "block": "Academic Block"}, {"num": 11, "name": "PED Room", "block": "Academic Block"}, {"num": 12, "name": "Labs", "block": "Academic Block"}]}, {"team": "Team D", "route": [{"num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}, {"num": 20, "name": "Ground", "block": "IT Tower"}, {"num": 21, "name": "SOI", "block": "IT Tower"}, {"num": 22, "name": "Incubation Centre", "block": "IT Tower"}, {"num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}, {"num": 24, "name": "Dell Canteen", "block": "Common Block"}, {"num": 25, "name": "Microbiology Lab", "block": "Common Block"}, {"num": 26, "name": "ATM", "block": "Common Block"}, {"num": 27, "name": "Auditorium", "block": "Common Block"}, {"num": 28, "name": "Students Parking", "block": "Common Block"}, {"num": 29, "name": "Hostel", "block": "Common Block"}, {"num": 30, "name": "Accounts Section", "block": "Common Block"}, {"num": 31, "name": "Ignite Talks", "block": "Admission Block"}, {"num": 1, "name": "Library", "block": "Admin Block"}, {"num": 2, "name": "Yoga Hall", "block": "Admin Block"}, {"num": 3, "name": "Placement Hall", "block": "Admin Block"}, {"num": 4, "name": "COE Office", "block": "Admin Block"}, {"num": 5, "name": "Heavenly Water", "block": "Admin Block"}, {"num": 6, "name": "IQAC", "block": "Admin Block"}, {"num": 7, "name": "Kite Recepetion", "block": "Admin Block"}, {"num": 8, "name": "Clubs and Cells", "block": "Academic Block"}, {"num": 9, "name": "Metazord", "block": "Academic Block"}, {"num": 10, "name": "Thought Works Lab", "block": "Academic Block"}, {"num": 11, "name": "PED Room", "block": "Academic Block"}, {"num": 12, "name": "Labs", "block": "Academic Block"}, {"num": 13, "name": "MI Room", "block": "Academic Block"}, {"num": 14, "name": "Counselling room", "block": "Academic Block"}, {"num": 15, "name": "Centre of Excellence", "block": "Academic Block"}, {"num": 16, "name": "Idea Lab", "block": "Academic Block"}, {"num": 17, "name": "Go Kart", "block": "Academic Block"}, {"num": 18, "name": "Department and Classroom", "block": "Academic Block"}]}, {"team": "Team E", "route": [{"num": 25, "name": "Microbiology Lab", "block": "Common Block"}, {"num": 26, "name": "ATM", "block": "Common Block"}, {"num": 27, "name": "Auditorium", "block": "Common Block"}, {"num": 28, "name": "Students Parking", "block": "Common Block"}, {"num": 29, "name": "Hostel", "block": "Common Block"}, {"num": 30, "name": "Accounts Section", "block": "Common Block"}, {"num": 31, "name": "Ignite Talks", "block": "Admission Block"}, {"num": 1, "name": "Library", "block": "Admin Block"}, {"num": 2, "name": "Yoga Hall", "block": "Admin Block"}, {"num": 3, "name": "Placement Hall", "block": "Admin Block"}, {"num": 4, "name": "COE Office", "block": "Admin Block"}, {"num": 5, "name": "Heavenly Water", "block": "Admin Block"}, {"num": 6, "name": "IQAC", "block": "Admin Block"}, {"num": 7, "name": "Kite Recepetion", "block": "Admin Block"}, {"num": 8, "name": "Clubs and Cells", "block": "Academic Block"}, {"num": 9, "name": "Metazord", "block": "Academic Block"}, {"num": 10, "name": "Thought Works Lab", "block": "Academic Block"}, {"num": 11, "name": "PED Room", "block": "Academic Block"}, {"num": 12, "name": "Labs", "block": "Academic Block"}, {"num": 13, "name": "MI Room", "block": "Academic Block"}, {"num": 14, "name": "Counselling room", "block": "Academic Block"}, {"num": 15, "name": "Centre of Excellence", "block": "Academic Block"}, {"num": 16, "name": "Idea Lab", "block": "Academic Block"}, {"num": 17, "name": "Go Kart", "block": "Academic Block"}, {"num": 18, "name": "Department and Classroom", "block": "Academic Block"}, {"num": 19, "name": "Kite Cafeteria (Amizhtham)", "block": "IT Tower"}, {"num": 20, "name": "Ground", "block": "IT Tower"}, {"num": 21, "name": "SOI", "block": "IT Tower"}, {"num": 22, "name": "Incubation Centre", "block": "IT Tower"}, {"num": 23, "name": "Sanjvee Canteen", "block": "Common Block"}, {"num": 24, "name": "Dell Canteen", "block": "Common Block"}]}]};
+
+const blockClass = {
+  "Admin Block": "blk-admin",
+  "Academic Block": "blk-academic",
+  "IT Tower": "blk-ittower",
+  "Common Block": "blk-common",
+  "Admission Block": "blk-admission"
+};
+
+// ---- Build "By Time Slot" table ----
+const thead = document.getElementById('table-head');
+thead.innerHTML = '<th>Time Slot</th>' + DATA.teams.map(t => `<th>${t}</th>`).join('');
+
+const tbody = document.getElementById('table-body');
+tbody.innerHTML = DATA.schedule.map(row => {
+  const cells = row.stops.map(s => {
+    const cls = blockClass[s.block] || '';
+    return `<td class="${cls}"><div class="cell-inner"><span class="venue-num">#${s.num} · ${s.block}</span><span class="venue-name">${s.name}</span></div></td>`;
+  }).join('');
+  return `<tr><td>Slot ${row.slot}</td>${cells}</tr>`;
+}).join('');
+
+// ---- Build "By Team Route" cards ----
+const routesWrap = document.getElementById('routes-wrap');
+routesWrap.innerHTML = DATA.teamRoutes.map(tr => {
+  const chips = tr.route.map((stop, i) => {
+    const cls = blockClass[stop.block] || '';
+    const arrow = i < tr.route.length - 1 ? '<span class="arrow">→</span>' : '';
+    return `<span class="stop-chip ${cls}"><span class="n">${stop.num}</span>${stop.name}</span>${arrow}`;
+  }).join('');
+  return `
+    <div class="panel route-card">
+      <div class="route-head">
+        <span class="team-dot"></span>
+        <h3>${tr.team}</h3>
+        <span>Starts at venue #${tr.route[0].num} · ${tr.route[0].name}</span>
+      </div>
+      <div class="route-track">${chips}</div>
+    </div>`;
+}).join('');
+
+// ---- Tabs ----
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.view).classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>
